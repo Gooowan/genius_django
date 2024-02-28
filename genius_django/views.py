@@ -1,39 +1,29 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.forms import UserCreationForm
-from pymongo import MongoClient
-from django.http import JsonResponse
+from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponse
+import requests
 
-def login_view(request):
+@csrf_exempt
+def login(request):
+    render(request, 'login.html')
+
+
+@csrf_exempt
+def signup(request):
+    print('1')
     if request.method == 'POST':
-        # Get parameters from form
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-
-        # Connect to MongoDB
-        client = MongoClient('mongodb://localhost:27017/')
-        db = client['mydatabase']
-
-        # Query MongoDB
-        user = db.users.find_one({'username': username, 'password': password})
-
-        if user:
-            login(request, user)
-            return redirect('home')
+        print('2')
+        form_data = {
+            'username': request.POST.get('username'),
+            'role': request.POST.get('role'),
+            'password': request.POST.get('password')
+        }
+        print('3')
+        response = requests.post('http://localhost:3000/signup/', data=form_data)
+        if response.status_code == 200:
+            print('4')
+            return HttpResponse('User Registered successfully')
         else:
-            return render(request, 'login.html', {'error': 'Invalid username or password'})
+            return HttpResponse(f'An error occurred: {response.text}', status=response.status_code)
     else:
-        return render(request, 'login.html')
-
-
-def signup_view(request):
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('login')
-        else:
-            return render(request, 'signup.html', {'form': form})
-    else:
-        form = UserCreationForm()
-        return render(request, 'signup.html', {'form': form})
+        return render(request, 'signup.html')
