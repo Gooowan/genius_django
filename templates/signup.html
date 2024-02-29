@@ -80,7 +80,7 @@
             .then(response => response.json())
             .then(data => {
                 if (data.message === "User saved successfully") {
-                window.location.href = '/'; // Redirect to home page
+                window.location.href = '/';
             } else {
                 console.error(data.message);
             }
