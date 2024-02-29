@@ -68,15 +68,24 @@
         function validateForm() {
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
-             const role = document.getElementsByName('role')[0].value;
+            const role = document.getElementsByName('role')[0].value;
             console.log(username, password, role);
-            fetch('http://127.0.0.1:8000/signup/', {
+            fetch('http://localhost:3000/saveuser', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({username: username, role: role, password: password})
             })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === "User saved successfully") {
+                window.location.href = '/'; // Redirect to home page
+            } else {
+                console.error(data.message);
+            }
+            })
+            .catch(error => console.error('Error:', error));
         }
     </script>
 </body>

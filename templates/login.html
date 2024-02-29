@@ -60,7 +60,19 @@
         <input type="submit" value="Submit">
     </form>
     <script>
-
+        function validateForm() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const role = document.getElementsByName('role')[0].value;
+            console.log(username, password, role);
+            fetch('http://localhost:3000/saveuser', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({username: username, role: role, password: password})
+            })
+        }
     </script>
 </body>
 </html>
